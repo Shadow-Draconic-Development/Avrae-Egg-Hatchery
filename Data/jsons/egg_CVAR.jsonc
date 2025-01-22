@@ -1,0 +1,22 @@
+{
+    "egg1": {
+        "name": "Test1",
+        "mode": "checks",
+        "image": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal4.png",
+        "mode_settings": {
+            "cooldown": 82800,
+            "num_checks": 15,
+            "skill": "animalHandling",
+            "dc": 15
+        }
+    },
+    "egg2": {
+        "name": "Test2",
+        "mode": "time",
+        "image": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal1.png",
+        "mode_settings": {
+            "start_time": 1737156132,
+            "end_time": 1738365732
+        }
+    }
+}

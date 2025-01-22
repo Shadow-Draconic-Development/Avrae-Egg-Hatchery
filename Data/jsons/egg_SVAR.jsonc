@@ -1,0 +1,22 @@
+{
+    "mode": "checks", // Can be time
+    "time": 1209600, // 2 weeks in seconds
+    "checks": {
+        "cooldown": 82800, // 23 hrs in seconds 
+        "num_checks": 15, // Number of successful checks required
+        "skill": "animalHandling", //
+        "dc": 15 // DC of checks
+    },
+    "image_urls": { // URLs of images
+        "canvas1": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/canvas1.png",
+        "canvas2": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/canvas2.png",
+        "glass1": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/glass1.png",
+        "glass2": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/glass2.png",
+        "glass3": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/glass3.png",
+        "glass4": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/glass4.png",
+        "metal1": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal1.png",
+        "metal2": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal2.png",
+        "metal3": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal3.png",
+        "metal4": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal4.png"
+    }
+}
