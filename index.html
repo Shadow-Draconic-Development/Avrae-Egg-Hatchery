@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Egg Hatchery Settings Generator</title>
+    <link rel="stylesheet" href="./Data/website/styles.css">
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/Shadow-Draconic-Development/.github/main/assets/icon.ico">
+</head>
+<body>
+    <header>
+        <h1>Egg Hatchery Settings Generator</h1>
+        <img src="Data/images/canvas1.png" alt="Logo" width="10%" style="min-width: 70px" />
+    </header>
+    <nav>
+        <a href="https://shadow-draconic-development.github.io/.github/" target="_blank">Shadow Draconic Development Main Page</a>
+        <a href="https://github.com/Shadow-Draconic-Development/Avrae-Deck-of-Whatever-You-Want" target="_blank">GitHub</a>
+      </nav>
+    <main id="container">
+        <button id="toggleTheme">Switch to Dark Mode</button>
+        <br>
+        <br>
+        <label for="modeDropdown">Select Mode:</label>
+        <select id="modeDropdown">
+            <option value="">--Select--</option>
+            <option value="time">Time</option>
+            <option value="checks">Checks</option>
+        </select>
+
+        <!-- Time Input Section -->
+        <div id="timeInput" style="display: none;">
+            <label for="timeValue">Time (seconds):</label>
+            <input type="text" id="timeValue" placeholder="Enter time in seconds">
+        </div>
+
+        <!-- Checks Section -->
+        <div id="checksSection" style="display: none;">
+            <!-- Inputs for checks will be dynamically created here -->
+        </div>
+
+        <!-- Image URLs Section -->
+        <div id="imageUrlsSection">
+            <h3>Image URLs</h3>
+        </div>
+
+        <!-- Button for adding image URL -->
+        <button id="addImageUrlButton">Add Image URL</button>
+        
+        <!-- JSON Output -->
+        <div>
+            <h3>Generated JSON</h3>
+            <button id="copyToClipboardButton">Add to Clipboard</button>
+            <textarea id="jsonOutput" rows="10" cols="50" readonly></textarea>
+        </div>
+    </main>
+    <script src="./Data/website/scripts.js"></script>
+</body>
+</html>
