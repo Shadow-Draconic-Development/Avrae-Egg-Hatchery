@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Dynamically create inputs for checks if mode is "checks"
         if (mode === "checks" && checksSection.children.length === 0) {
             const fields = [
-                { label: "Cooldown", key: "cooldown" },
+                { label: "Cooldown (in seconds)", key: "cooldown" },
                 { label: "Number of Checks", key: "num_checks" },
                 { label: "Skill", key: "skill", isDropdown: true },
                 { label: "DC", key: "dc" }
@@ -138,9 +138,27 @@ document.addEventListener("DOMContentLoaded", () => {
                         <select id="${key}" data-key="${key}">
                             <option value="">Select Skill</option>
                             <option value="acrobatics">Acrobatics</option>
-                            <option value="athletics">Athletics</option>
+                            <option value="animalHandling">Animal Handling</option>
+                            <option value="arcana">Arcana</option>
+                            <option value="deception">Deception</option>
+                            <option value="history">History</option>
+                            <option value="insight">Insight</option>
+                            <option value="investigation">Investigation</option>
+                            <option value="medicine">Medicine</option>
+                            <option value="nature">Nature</option>
                             <option value="perception">Perception</option>
-                            <!-- Add more options as necessary -->
+                            <option value="performance">Performance</option>
+                            <option value="persuasion">Persuasion</option>
+                            <option value="religion">Religion</option>
+                            <option value="sleightOfHand">Sleight of Hand</option>
+                            <option value="stealth">Stealth</option>
+                            <option value="survival">Survival</option>
+                            <option value="strength">Strength</option>
+                            <option value="dexterity">Dexterity</option>
+                            <option value="constitution">Constitution</option>
+                            <option value="intelligence">Intelligence</option>
+                            <option value="wisdom">Wisdom</option>
+                            <option value="charisma">Charisma</option>
                         </select>
                     `;
                     // Add event listener to the skill dropdown to trigger JSON update
