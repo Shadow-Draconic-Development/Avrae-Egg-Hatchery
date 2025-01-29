@@ -1,0 +1,104 @@
+multiline
+<drac2>
+
+
+def main(input_dict: dict, footer: str) -> tuple(str, str):
+    """
+
+    This function is designed to import egg setting data from a JSON string.
+
+    Args:
+        input_dict (dict): Input dictionary from JSON string
+        footer (str): Footer string
+
+    Return:
+        str: Embed string
+        str: SVAR string
+    """
+
+    # If SVAR already exists, load SVAR dictionary
+    if (svar_dict := get_svar("egg_SVAR")):
+        svar_dict = load_json(svar_dict)
+
+    # If it doesn't exist, create empty dictionary
+    else:
+        svar_dict = {}
+
+    # For settings mode and time
+    for setting in ["mode", "time"]:
+
+        # If setting in input dictionary, update SVAR dictionary
+        if setting in input_dict.keys():
+            svar_dict[setting] = input_dict[setting]
+
+    # If checks in input dictionary
+    if "checks" in input_dict.keys():
+
+        # If checks not in SVAR dictionary
+        if not "checks" in svar_dict.keys():
+            svar_dict["checks"] = {}
+
+        # For sub-settings cooldown, num_checks, skill, and dc
+        for setting in ["cooldown", "num_checks", "skill", "dc"]:
+
+            # If sub-setting in input dictionary, update SVAR dictionary
+            if setting in input_dict["checks"].keys():
+                svar_dict["checks"][setting] = input_dict["checks"][setting]
+
+    # If image_urls in input dictionary
+    if "image_urls" in input_dict.keys():
+
+        # If image_urls not in SVAR dictionary
+        if not "image_urls" in svar_dict:
+            svar_dict["image_urls"] = {}
+
+        # Merge input dictionary with SVAR dictionary
+        svar_dict["image_urls"] = svar_dict["image_urls"] | input_dict["image_urls"]
+
+        # For each image URL
+        for key in list(svar_dict["image_urls"].keys()):
+
+            # If image URL is blank, remove entry
+            if svar_dict["image_urls"][key] == "":
+                svar_dict["image_urls"].pop(key)
+
+    # If reliable_talent in input dictionary
+    if "reliable_talent" in input_dict.keys():
+
+        # Update SVAR dictioanry with input dictionary
+        svar_dict["reliable_talent"] = input_dict["reliable_talent"]
+
+        # If SVAR setting is False
+        if not svar_dict["reliable_talent"]:
+            svar_dict.pop("reliable_talent")
+
+    # Random image name
+    random_image = randchoice(["canvas1", "canvas2", "glass1", "glass2", "glass3", "metal1", "metal2", "metal3", "metal4"])
+
+    return f"{ctx.prefix}embed -title 'Successful Import' -f 'Egg settings successfully imported' -footer '{footer}' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/{random_image}.png'", f"{ctx.prefix}svar egg_SVAR {dump_json(svar_dict)}"
+
+
+# Collect inputs
+input_list = &ARGS&
+
+footer = "!egg import [JSON string] | 1/28/25 | ShadowsStride"
+
+# If there is not at least one input 
+if len(input_list) < 1:
+    embed_str, svar_str = f"{ctx.prefix}embed -title 'You Have Been Sneak Attacked by an Error' -f 'Expected a JSON string' -footer '{footer}' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png' -color '#CF142B'", ""
+
+# Otherwise
+else:
+
+    # Try to load input as a dictionary
+    try:
+        embed_str, svar_str = main(load_json(input_list[0]), footer)
+
+    # If there was an error loading dictionary
+    except:
+        embed_str, svar_str = f"{ctx.prefix}embed -title 'You Have Been Sneak Attacked by an Error' -f 'Error processing JSON string' -footer '{footer}' -thumb 'https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png' -color '#CF142B'", ""
+
+
+</drac2>
+{{embed_str}}
+{{svar_str}}

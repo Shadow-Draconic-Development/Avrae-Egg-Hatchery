@@ -1,0 +1,160 @@
+embed
+<drac2>
+
+
+def search_list(query: str, item_list: list[str]) -> list[str]|None:
+    """
+    Searches for item in list.
+
+    Args:
+        query (str): The query being made
+        item_list (list): List of items
+
+    Return:
+        list[str]|None: If it finds at least one match, it returns the item(s) in a list, otherwise it returns None
+    """
+
+    # Finds at least 1 match
+    if len(item_results := [item for item in item_list if query.lower() in item.lower()]) > 0:
+        return item_results
+
+    # If it finds no matches
+    else:
+        return None
+
+
+def multiple_match_determine(search_result: list[str], input_value: str) -> str|bool:
+    """
+    Determines if there is an exact match in search results
+    
+    Args:
+        search_result (list[str]): List of search results
+        input_value (str): Input value to match
+
+    Returns:
+        str|bool: The exact match if found, otherwise False
+    """
+
+    for match in search_result:
+        if match.lower() == input_value.lower():
+            return match
+
+    return False
+
+
+def main(input_list: list[str]) -> tuple(str, str, str, str):
+    """
+    This script handles the removal of an egg from a character's inventory.
+
+    Args:
+        input_list (list[str]): List of inputs
+
+    Return:
+        str: Title
+        str: Main body paragraph
+        str: Hex color code
+        str: Image URL
+    """
+
+    # To ensure that a character is selected
+    if not (ch := character()):
+        return "You Have Been Sneak Attacked by an Error", "You must have a character selected", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # Ensures that the CVAR exists
+    if not (cvar_dict := ch.get_cvar("egg_CVAR")):
+        return "You Have Been Sneak Attacked by an Error", "You do not have any eggs", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # Load CVAR dictionary
+    cvar_dict = load_json(cvar_dict)
+
+    # If there are no eggs in the CVAR dictionary
+    if len(cvar_dict.keys()) < 1:
+        return "You Have Been Sneak Attacked by an Error", "You do not have any eggs", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # To make sure there is at least one input
+    if len(input_list) < 1 and len(cvar_dict.keys()) > 1:
+        return "You Have Been Sneak Attacked by an Error", "Expected name of egg", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # If there are no inputs, but there is only one egg... set egg as input
+    if len(input_list) < 1 and len(cvar_dict.keys()) == 1:
+        input_list.append(list(cvar_dict.keys())[0])
+
+    # If it finds at least one match
+    if (search_results := search_list(input_list[0], cvar_dict.keys())):
+
+        # If it finds exactly one egg
+        if len(search_results) == 1:
+            input_list[0] = search_results[0]
+
+        # If it finds more than one egg
+        else:
+
+            # If it finds an exact match
+            if (search_results2 := multiple_match_determine(search_result, input_list[0])):
+                input_list[0] = search_results2
+
+            # If it does not find an exact match
+            else:
+                search_results.insert(0, "**Multiple Matches Found:**")
+
+                return "You Have Been Sneak Attacked by an Error", "\n".join(search_results), "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+    
+    # If it finds no matches
+    else:
+        return "You Have Been Sneak Attacked by an Error", f"Egg name not found ({input_list[0]})", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # Grab current time, egg data, and image
+    current_time = int(time())
+    egg_data = cvar_dict.pop(input_list[0])
+  
+
+    title = f"{name} Removes Their Egg ({input_list[0]})"
+
+    # If egg is time based
+    if egg_data["mode"] == "time":
+
+        # If egg is hatched
+        if current_time >= egg_data["mode_settings"]["end_time"]:
+            f = "Your egg has successfully hatched"
+
+        # If egg is not hatched
+        else:
+            f = "Your egg failed to hatch"
+            egg_data["image"] = "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # If egg is checks based
+    else:
+        # Try to load CC
+        try:
+            counter_obj = ch.cc(f"{input_list[0]} Egg Counter")
+
+            # If successes obtained
+            if counter_obj.value == counter_obj.max:
+                f = "Your egg has successfully hatched"
+
+            # If successes not obtained
+            else:
+                f = "Your egg failed to hatch"
+
+            ch.delete_cc(f"{input_list[0]} Egg Counter")
+
+        # If failed to load CC or failed to delete CC
+        except:
+            f = "Your egg failed to hatch"
+
+    # Update CVAR dictionary
+    ch.set_cvar("egg_CVAR", dump_json(cvar_dict))
+
+    return title, f, "", egg_data["image"]
+
+
+# Main program function
+title, f, color, thumb = main(&ARGS&)
+
+
+</drac2>
+-title "{{title}}"
+-f "{{f}}"
+-color "{{color}}"
+-thumb "{{thumb}}"
+-footer "{{ctx.prefix}}egg remove [egg_name] | 1/29/25 | ShadowsStride"

@@ -1,0 +1,236 @@
+embed
+<drac2>
+
+
+def search_list(query: str, item_list: list[str]) -> list[str]|None:
+    """
+    Searches for item in list.
+
+    Args:
+        query (str): The query being made
+        item_list (list): List of items
+
+    Return:
+        list[str]|None: If it finds at least one match, it returns the item(s) in a list, otherwise it returns None
+    """
+
+    # Finds at least 1 match
+    if len(item_results := [item for item in item_list if query.lower() in item.lower()]) > 0:
+        return item_results
+
+    # If it finds no matches
+    else:
+        return None
+
+
+def multiple_match_determine(search_result: list[str], input_value: str) -> str|bool:
+    """
+    Determines if there is an exact match in search results
+    
+    Args:
+        search_result (list[str]): List of search results
+        input_value (str): Input value to match
+
+    Returns:
+        str|bool: The exact match if found, otherwise False
+    """
+
+    for match in search_result:
+        if match.lower() == input_value.lower():
+            return match
+
+    return False
+
+
+def validate_svar(svar_dict: dict) -> tuple(bool, str):
+    """
+    Validates the SVAR dictionary to ensure all necessary settings are present.
+
+    Args:
+        svar_dict (dict): The SVAR dictionary to validate
+
+    Returns:
+        bool: If the svar_dict is valid
+        str: If svar_dict is invalid, contains error message
+    """
+    
+    # Check if "mode" is present in the svar_dict keys
+    if not "mode" in svar_dict.keys():
+        return False, "SVAR dict missing mode type"
+
+    # If mode is "time", check if "time" is present in the svar_dict keys
+    if svar_dict["mode"] == "time":
+        if not "time" in svar_dict.keys():
+            return False, "SVAR dict missing 'time' settings"
+
+    # If mode is not "time", check if "checks" is present in the svar_dict keys
+    else:
+        if not "checks" in svar_dict.keys():
+            return False, "SVAR dict missing 'checks' settings"
+
+        # Initialize a list to keep track of missing settings
+        missing_settings = []
+
+        # Check for each required setting in the "checks" dictionary
+        for setting in ["cooldown", "num_checks", "dc", "skill"]:
+            if not setting in svar_dict["checks"].keys():
+                missing_settings.append(setting)
+
+        # If there are any missing settings, return an error message listing them
+        if len(missing_settings) > 0:
+            return False, "\n".join(["SVAR dict missing the following 'checks' settings:"] + missing_settings)
+
+    return True, ""
+
+
+def main(input_list: list[str]) -> tuple(str, str, str, str):
+
+    current_time = int(time())
+
+    # To make sure there is at least one input
+    if len(input_list) < 1:
+        return "You Have Been Sneak Attacked by an Error", "Expected egg name", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # To ensure that a SVAR dictionary exists
+    if not (svar_dict := get_svar("egg_SVAR")):
+        return "You Have Been Sneak Attacked by an Error", "Server settings does not exist", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # Load SVAR dictionary
+    svar_dict = load_json(svar_dict)
+
+    # Verify that SVAR works properly
+    svar_test, error_msg = validate_svar(svar_dict)
+
+    # If SVAR has an error
+    if not svar_test:
+        return "You Have Been Sneak Attacked by an Error", error_msg, "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # To ensure that a character is selected
+    if not (ch := character()):
+        return "You Have Been Sneak Attacked by an Error", "You must have a character selected", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # If CVAR exists, load CVAR dictionary
+    if (cvar_dict := ch.get_cvar("egg_CVAR")):
+        cvar_dict = load_json(cvar_dict)
+
+    # If CVAR does not exist, load empty dictionary
+    else:
+        cvar_dict = {}
+
+    # If there is exactly one input (egg name)
+    if len(input_list) == 1:
+        
+        # If there are image_urls in the SVAR dictionary
+        if "image_urls" in svar_dict.keys():
+
+            # There is at least one image
+            if len(svar_dict["image_urls"].keys()) > 0:
+
+                # Grab random image key
+                random_image_key = randchoice(list(svar_dict["image_urls"].keys()))
+
+                # Select image
+                input_list.append(svar_test["image_urls"][random_image_key])
+
+            # If there are no images, use random images
+            else:
+                random_image_key = randchoice(["canvas1", "canvas2", "glass1", "glass2", "glass3", "metal1", "metal2", "metal3", "metal4"])
+                input_list.append(f"https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/{random_image_key}.png")
+        
+        # If there are no image_urls in the SVAr dictionary, use random images
+        else:
+            random_image_key = randchoice(["canvas1", "canvas2", "glass1", "glass2", "glass3", "metal1", "metal2", "metal3", "metal4"])
+            input_list.append(f"https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/{random_image_key}.png")
+
+    # If there is at least one existing egg that matched
+    if (search_result := search_list(input_list[0], cvar_dict.keys())):
+
+        # If there is an exact match of an existing egg
+        if (result_test := multiple_match_determine(search_result, input_list[0])):
+            return "You Have Been Sneak Attacked by an Error", "That egg name already exists", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+
+    
+    # If SVAR settings is time
+    if svar_dict["mode"] == "time":
+
+        # Setup time dictionary
+        cvar_dict[input_list[0]] = {
+            "mode": "time",
+            "image": input_list[1],
+            "mode_settings": {
+                "end_time": current_time + svar_dict["time"]
+            }
+        }
+
+        f = f"**Type:** Time-based\n**Completion Time:** <t:{cvar_dict[input_list[0]]['mode_settings']['end_time']}:f>"
+
+    # If SVAR settings is checks
+    else:
+
+        # Setup checks dictionary
+        cvar_dict[input_list[0]] = {
+            "mode": "checks",
+            "image": input_list[1],
+            "mode_settings": {
+                "cooldown": svar_dict["checks"]["cooldown"],
+                "skill": svar_dict["checks"]["skill"],
+                "dc": svar_dict["checks"]["dc"],
+                "time": 1737673385
+            }
+        }
+
+        # Setup checks counter
+        ch.create_cc(
+            name=f"{input_list[0]} Egg Counter",
+            minVal="0",
+            maxVal=str(svar_dict["checks"]["num_checks"]),
+            reset=None,
+            dispType="bubble",
+            title=f"{input_list[0]} Egg Counter",
+            desc="Egg counter used by Shadow's Egg Hatchery Content Library",
+            initial_value="0"
+        )
+
+        # Make skill look pretty
+        skill_dict = {
+            "arcana": "Arcana",
+            "acrobatics": "Acrobatics",
+            "animalHandling": "Animal Handling",
+            "athletics": "Athletics",
+            "deception": "Deception",
+            "history": "History",
+            "insight": "Insight",
+            "intimidation": "Intimidation",
+            "investigation": "Investigation",
+            "medicine": "Medicine",
+            "nature": "Nature",
+            "perception": "Perception",
+            "performance": "Performance",
+            "persuasion": "Persuasion",
+            "religion": "Religion",
+            "sleightOfHand": "Sleight of Hand",
+            "stealth": "Stealth",
+            "survival": "Survival"
+        }
+
+        f = f"**Type:** Check-based\n**Skill:** {skill_dict[svar_dict['checks']['skill']]}\n**DC:** {svar_dict['checks']['dc']}\n\nNote: No skill checks were made"
+
+    # Update CVAR dictionary
+    ch.set_cvar("egg_CVAR", dump_json(cvar_dict))
+
+    return "Egg Successfully Added", f, "", input_list[1]
+
+
+# Main program function
+title, f, color, thumb = main(&ARGS&)
+
+# Left < bracket because Avrae is dumb
+l = "<"
+
+</drac2>
+-title "{{title}}"
+-f "{{f}}"
+-color "{{color}}"
+-thumb "{{thumb}}"
+-footer "{{ctx.prefix}}egg add [egg name] {{l}}image URL> | 1/29/25 | ShadowsStride"
