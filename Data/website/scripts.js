@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleThemeButton.textContent = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
     });
 
+
     // Generate JSON function (unformatted and single-quoted)
     const generateJSON = () => {
         let jsonData = {};
@@ -92,6 +93,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (Object.keys(checksData).length > 0) {
             jsonData.checks = checksData;
         }
+
+        // Handle reliable_talent
+        const reliableTalentValue = reliableTalent.value;
+        if (reliableTalentValue === "true") {
+            jsonData.reliable_talent = true;
+        } else if (reliableTalentValue === "false") {
+            jsonData.reliable_talent = false;
+        }
+
 
         // Unformatted JSON with single quotes
         let unformattedJSON = JSON.stringify(jsonData);
@@ -220,4 +230,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initial JSON generation
     generateJSON();
+
+    const imageNames = ["canvas1", "canvas2", "glass1", "glass2", "glass3", "metal1", "metal2", "metal3", "metal4"];
+
+    function replaceImage() {
+
+        const randomImage = imageNames[Math.floor(Math.random() * imageNames.length)];
+
+        // Get the image element
+        const imgElement = document.querySelector("img[alt='Logo']");
+
+        if (imgElement) {
+            imgElement.src = `Data/images/${randomImage}.png`;
+        }
+    }
+
+    replaceImage();
 });
