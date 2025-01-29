@@ -84,7 +84,21 @@ def validate_svar(svar_dict: dict) -> tuple(bool, str):
 
 
 def main(input_list: list[str]) -> tuple(str, str, str, str):
+    """
+    
+    Main function to add an egg.
 
+    Args:
+        input_list (list[str]): List of input values
+
+    Returns:
+        str: Title, 
+        str: Main body paragraph
+        str: Color hex code
+        str: Image URL
+    """
+    
+    # Grab current time
     current_time = int(time())
 
     # To make sure there is at least one input
