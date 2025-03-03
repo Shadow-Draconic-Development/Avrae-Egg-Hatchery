@@ -1,0 +1,208 @@
+embed
+<drac2>
+
+
+def search_list(query: str, item_list: list[str]) -> list[str]|None:
+    """
+    Searches for item in list.
+
+    Args:
+        query (str): The query being made
+        item_list (list): List of items
+
+    Return:
+        list[str]|None: If it finds at least one match, it returns the item(s) in a list, otherwise it returns None
+    """
+
+    # Finds at least 1 match
+    if len(item_results := [item for item in item_list if query.lower() in item.lower()]) > 0:
+        return item_results
+
+    # If it finds no matches
+    else:
+        return None
+
+
+def multiple_match_determine(search_result: list[str], input_value: str) -> str|bool:
+    """
+    Determines if there is an exact match in search results
+    
+    Args:
+        search_result (list[str]): List of search results
+        input_value (str): Input value to match
+
+    Returns:
+        str|bool: The exact match if found, otherwise False
+    """
+
+    for match in search_result:
+        if match.lower() == input_value.lower():
+            return match
+
+    return False
+
+def list_output_f(ch: character, cvar_dict: dict) -> list[str]:
+    """
+    Generates the output list for the eggs.
+
+    Args:
+        ch (character): The character object
+        cvar_dict (dict): The CVAR dictionary containing egg data
+
+    Returns:
+        list[str]: The formatted output list
+    """
+
+    # Initialize empty list
+    output_list = []
+
+    # For each key, value in CVAR dictionary
+    for key, value in cvar_dict.items():
+
+        # Create header
+        output_list.append(f"**{key}:**")
+
+        # If checks
+        if value["mode"] == "checks":
+
+            # Try to display counter
+            try:
+                cc_obj = ch.cc(f"{key} Egg Counter")
+
+                output_list.append(f"- Counter: {cc_obj.value}/{cc_obj.max}")
+
+            # Display error if unable to view counter
+            except:
+                output_list.append("`UNABLE TO VIEW COUNTER`")
+
+        # If time
+        else:
+            output_list.append(f"- Hatch Time: <t:{value['mode_settings']['end_time']}:f>")
+
+        # Insert spacer between eggs
+        output_list.append("")
+
+    # Reason we output list is because we want to be able to easily add to it later if we need to
+    return output_list
+
+
+def main(input_list: list[str]) -> tuple(str, str, str, str):
+    """"""
+
+    # To ensure that a character is selected
+    if not (ch := character()):
+        return "You Have Been Sneak Attacked by an Error", "You must have a character selected", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # Ensures that the CVAR exists
+    if not (cvar_dict := ch.get_cvar("egg_CVAR")):
+        return f"{name} Views Their Eggs", "None", "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # Load CVAR dictionary
+    cvar_dict = load_json(cvar_dict)
+
+    # If there are no eggs in the CVAR dictionary
+    if len(cvar_dict.keys()) < 1:
+        return f"{name} Views Their Eggs", "None", "", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
+    # Grab list of images
+    images = [cvar_dict[egg_name]["image"] for egg_name in cvar_dict.keys()]
+
+    # If no inputs, default to display details about all eggs
+    if len(input_list) < 1:
+        return f"{name} Views Their Eggs", "\n".join(list_output_f(ch, cvar_dict)), "", randchoice(images)
+
+    # If at least one input, it finds at least one match
+    if (search_results := search_list(input_list[0], cvar_dict.keys())):
+
+        # If it finds exactly one match
+        if len(search_results) == 1:
+            input_list[0] = search_results[0]
+
+        # If it finds more than one match
+        else:
+
+            # If it finds an exact match
+            if (search_results2 := multiple_match_determine(search_results, input_list[0])):
+                input_list[0] = search_results2
+
+            # If it does not find an exact match, give details about all eggs but display error message
+            else:
+                f_list = ["**Multiple Matches Found:**"] + search_results + [""] + list_output_f(ch, cvar_dict)
+
+                return f"{name} Views Their Eggs", "\n".join(f_list), "#CF142B", randchoice(images)
+
+    # If it finds no matches, give details about all eggs but display error message
+    else:
+        f_list = [f"No matches found (`{input_list[0]}`)", ""] + list_output_f(ch, cvar_dict)
+
+        return f"{name} Views Their Eggs", "\n".join(f_list), "#CF142B", randchoice(images)
+
+    # If it finds a match, grab image URL
+    thumb = cvar_dict[input_list[0]]["image"]
+
+    # If mode is time, just utilize function to grab time
+    if cvar_dict[input_list[0]]["mode"] == "time":
+        return f"{name} Views Their Eggs", "\n".join(list_output_f(ch, {input_list[0]: cvar_dict[input_list[0]]})), "", thumb
+
+    # If mode is checks, custom output for that egg
+    else:
+
+        # Initialize empty list
+        output_list = []
+
+        # Create header
+        output_list.append(f"**{input_list[0]}:**")
+
+        # Try to grab counter
+        try:
+            cc_obj = ch.cc(f"{input_list[0]} Egg Counter")
+
+            output_list.append(f"- Counter: {cc_obj.value}/{cc_obj.max}")
+
+        # Display error if unable to grab counter
+        except:
+            output_list.append("`UNABLE TO VIEW COUNTER`")
+
+        # Skill dict to make skill look good
+        skill_dict = {
+            "arcana": "Arcana",
+            "acrobatics": "Acrobatics",
+            "animalHandling": "Animal Handling",
+            "athletics": "Athletics",
+            "deception": "Deception",
+            "history": "History",
+            "insight": "Insight",
+            "intimidation": "Intimidation",
+            "investigation": "Investigation",
+            "medicine": "Medicine",
+            "nature": "Nature",
+            "perception": "Perception",
+            "performance": "Performance",
+            "persuasion": "Persuasion",
+            "religion": "Religion",
+            "sleightOfHand": "Sleight of Hand",
+            "stealth": "Stealth",
+            "survival": "Survival"
+        }
+
+        # Display skill
+        output_list.append(f"- Skill: " + skill_dict[cvar_dict[input_list[0]]["mode_settings"]["skill"]])
+
+        # Display DC
+        output_list.append(f"- DC: " + cvar_dict[input_list[0]]["mode_settings"]["dc"])
+
+        return f"{name} Views Their Eggs", "\n".join(output_list), "", thumb
+
+
+# Main program function
+title, f, color, thumb = main(&ARGS&)
+
+# Stupid variable because Avrae can't handle corner brackets within the footer
+l = "<"
+
+</drac2>
+-title "{{title}}"
+-f "{{f}}"
+-color "{{color}}"
+-thumb "{{thumb}}"
+-footer "{{ctx.prefix}}egg list {{l}}egg name> | 1/30/25 | ShadowsStride"
