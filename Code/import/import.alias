@@ -65,12 +65,23 @@ def main(input_dict: dict, footer: str) -> tuple(str, str):
     # If reliable_talent in input dictionary
     if "reliable_talent" in input_dict.keys():
 
-        # Update SVAR dictioanry with input dictionary
+        # Update SVAR dictionary with input dictionary
         svar_dict["reliable_talent"] = input_dict["reliable_talent"]
 
         # If SVAR setting is False
         if not svar_dict["reliable_talent"]:
             svar_dict.pop("reliable_talent")
+
+    # If egg_limit in input dictionary
+    if "egg_limit" in input_dict.keys():
+
+        # Update SVAR dictionary with input dictionary
+        svar_dict["egg_limit"] = input_dict["egg_limit"]
+
+        # If SVAR setting is -1
+        if svar_dict["egg_limit"] == -1:
+            svar_dict.pop("egg_limit")
+
 
     # Random image name
     random_image = randchoice(["canvas1", "canvas2", "glass1", "glass2", "glass3", "metal1", "metal2", "metal3", "metal4"])
@@ -81,7 +92,7 @@ def main(input_dict: dict, footer: str) -> tuple(str, str):
 # Collect inputs
 input_list = &ARGS&
 
-footer = "!egg import [JSON string] | 1/28/25 | ShadowsStride"
+footer = "!egg import [JSON string] | 3/3/25 | ShadowsStride"
 
 # If there is not at least one input 
 if len(input_list) < 1:

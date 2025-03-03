@@ -19,5 +19,6 @@
         "metal3": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal3.png",
         "metal4": "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/metal4.png"
     },
-    "reliable_talent": false
+    "reliable_talent": false,
+    "egg_limit": -1
 }

@@ -131,6 +131,13 @@ def main(input_list: list[str]) -> tuple(str, str, str, str):
     else:
         cvar_dict = {}
 
+    # If egg_limit in SVAR dictionary
+    if "egg_limit" in svar_dict:
+
+        # If number of existing eggs exceeds (or will exceed) egg limit
+        if len(cvar_dict.keys()) > svar_dict["egg_limit"]:
+            return "You Have Been Sneak Attacked by an Error", f"You have already hit your egg limit: ({svar_dict['egg_limit']})", "#CF142B", "https://raw.githubusercontent.com/Shadow-Draconic-Development/Avrae-Egg-Hatchery/refs/heads/main/Data/images/broken.png"
+
     # If there is exactly one input (egg name)
     if len(input_list) == 1:
         
@@ -247,4 +254,4 @@ l = "<"
 -f "{{f}}"
 -color "{{color}}"
 -thumb "{{thumb}}"
--footer "{{ctx.prefix}}egg add [egg name] {{l}}image URL> | 1/29/25 | ShadowsStride"
+-footer "{{ctx.prefix}}egg add [egg name] {{l}}image URL> | 3/3/25 | ShadowsStride"

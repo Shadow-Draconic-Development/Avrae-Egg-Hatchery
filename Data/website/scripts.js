@@ -5,8 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let checksSection = document.getElementById("checksSection");
     let timeInput = document.getElementById("timeInput");
     let imageUrlsSection = document.getElementById("imageUrlsSection");
-
     let toggleThemeButton = document.getElementById("toggleTheme");
+    let eggLimitSection = document.getElementById("eggLimitSection");
+    let reliableTalent = document.getElementById("reliableTalent");
 
     // Function to apply dark mode
     const applyDarkMode = (isDark) => {
@@ -28,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const isDark = document.body.classList.toggle("dark-mode");
         toggleThemeButton.textContent = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
     });
-
 
     // Generate JSON function (unformatted and single-quoted)
     const generateJSON = () => {
@@ -64,9 +64,21 @@ document.addEventListener("DOMContentLoaded", () => {
             jsonData.time = parseInt(timeValue.value, 10); // Ensure it's an integer
         }
 
+        // Gather egg limit value (ensure it's an integer and greater than 0)
+        const eggLimitValue = document.getElementById("eggLimit");
+        if (eggLimitValue && eggLimitValue.value) {
+            const eggLimit = parseInt(eggLimitValue.value, 10);
+            if (eggLimit > 0) {
+                jsonData.egg_limit = eggLimit;
+            }
+            else if (eggLimit === -1) {
+                jsonData.egg_limit = eggLimit;
+            }
+        }
+
         // Gather checks data (ensure integers where needed)
         const checksData = {};
-        const checkInputs = checksSection.querySelectorAll('input');
+        const checkInputs = checksSection.querySelectorAll('input, select');
         checkInputs.forEach(input => {
             const key = input.dataset.key;
             const value = input.value;
@@ -101,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else if (reliableTalentValue === "false") {
             jsonData.reliable_talent = false;
         }
-
 
         // Unformatted JSON with single quotes
         let unformattedJSON = JSON.stringify(jsonData);
@@ -234,7 +245,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageNames = ["canvas1", "canvas2", "glass1", "glass2", "glass3", "metal1", "metal2", "metal3", "metal4"];
 
     function replaceImage() {
-
         const randomImage = imageNames[Math.floor(Math.random() * imageNames.length)];
 
         // Get the image element
